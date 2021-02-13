@@ -9,4 +9,4 @@ See the [ReactJS version here][reactsudoku].
 - Mobile-friendly
 - Uses [LocalStorage][localstorage] to save the current game state
 
-[play]: https://jaideep25.github.io/sudoku/
+[play]: https://jaideep25.github.io/Sudoku/
