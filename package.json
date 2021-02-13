@@ -1,36 +1,26 @@
 {
-  "name": "sudoku",
-  "version": "0.0.0",
-  "description": "A simple sudoku game",
-  "main": "bundle.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "buildjs": "webpack",
-    "buildcss": "lessc --clean-css ./css/main.less bundle.css"
-  },
-  "author": {
-    "name": "Andrey Nering",
-    "email": "andrey@nering.com.br",
-    "url": "https://andrey.nering.com.br"
-  },
+  "name": "vuejs-sudoku",
+  "version": "1.0.0",
+  "description": "VueJS implementation of Sudoku",
   "repository": {
     "type": "git",
-    "url": "https://github.com/andreynering/sudoku.git"
+    "url": "git+https://github.com/jaideep25/sudoku.git"
   },
-  "homepage": "https://sudoku.js.org",
+  "keywords": [
+    "vuejs",
+    "sudoku"
+  ],
+  "author": "Jaideep25",
   "license": "MIT",
-  "dependencies": {
-    "babel-preset-react": "^6.5.0",
-    "jsx-loader": "^0.13.2",
-    "lodash.chunk": "^4.0.0",
-    "lodash.clonedeep": "^4.0.1",
-    "react": "^0.14.3",
-    "react-dom": "^0.14.3",
-    "react-router": "^2.0.0-rc5",
-    "redux": "^3.0.5",
-    "webpack": "^1.12.9",
-    "babel-core": "^6.7.4",
-    "babel-loader": "^6.2.4",
-    "babel-preset-es2015": "^6.6.0"
+  "bugs": {
+    "url": "https://github.com/jaideep25/sudoku/issues"
+  },
+  "homepage": "https://github.com/jaideep25/sudoku#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-clean-css": "^2.0.11",
+    "gulp-concat": "^2.6.0",
+    "gulp-less": "^3.1.0",
+    "gulp-minify": "0.0.12"
   }
 }
