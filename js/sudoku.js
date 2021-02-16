@@ -1,184 +1,258 @@
-function chunk (arr, len) {
-  var chunks = [],
-    i = 0,
-    n = arr.length;
-  while (i < n) {
-    chunks.push(arr.slice(i, i += len));
-  }
-  return chunks;
+/**
+ * Sudoku
+ * Author: Varun Varada
+ */
+
+(function ( window ) {
+
+// Enable strict mode
+'use strict';
+
+/**
+ * Instantiates a new Sudoku board
+ */
+var Sudoku = function() {
+
+    /**
+     * Holds the size (n) of the current board, where the board is (n x n)
+     *
+     * @type {Number}
+     */
+    this.boardSize = 0;
+
+    /**
+     * Holds the number of currently filled cells on the board
+     *
+     * @type {Number}
+     */
+    this.filledCells = 0;
+
+    /**
+     * Multidimensional array that holds the initial board state
+     *
+     * @type {Array}
+     */
+    this.initialBoard = [];
+
+    /**
+     * Multidimensional array that holds the current board state
+     *
+     * @type {Array}
+     */
+    this.board = [];
+
+    /**
+     * Multidimensional array that holds the current board's solution
+     *
+     * @type {Array}
+     */
+    this.solution = [];
+
 };
-function pad(str, length, character) {
-  str = '' + str;
-  while (str.length < length) {
-    str = character + str;
-  }
-  return str;
-};
-function formatTimeFromSeconds(sec) {
-  var str = '';
 
-  hour = Math.floor(sec / 60.0 / 60.0);
-  str += pad(hour, 2, '0');
+$.extend( true, Sudoku.prototype, {
 
-  minute = Math.floor(sec / 60.0);
-  while (minute >= 60) {
-    minute -= 60;
-  }
-  str += ':' + pad(minute, 2, '0');
+    /**
+     * Gets the current board
+     *
+     * @return {Array[]} The current board
+     */
+    getBoard: function() {
+        return this.board;
+    },
 
-  sec = Math.floor(sec);
-  while (sec >= 60) {
-    sec -= 60;
-  }
-  str += ':' + pad(sec, 2, '0');
+    /**
+     * Gets the current board's solution
+     *
+     * @return {Array[]} The current board's solution
+     */
+    getSolution: function() {
+        return this.solution;
+    },
 
-  return str;
-};
+    /**
+     * Generates a new board
+     * Note: Gives the same board every time for the moment (have to implement a real board generator).
+     *
+     * @return {Array[]} The generated board
+     */
+    generate: function() {
+        var i;
 
-var v = new Vue({
-  el: '#app',
-  data: {
-    game: null,
-    time: null
-  },
-  methods: {
-    difficultyClick: function(event) {
-      event.preventDefault();
+        // Set board size
+        this.boardSize = 9;
 
-      var board = randomBoard(event.target.getAttribute('data-difficulty'));
-      var game = [];
-      for (var i = 0; i < 81; i++) {
-        if (board[i] === '0') {
-          game.push(null);
-        } else {
-          game.push(parseInt(board[i]));
+        // Initialize board
+        this.board = [
+            '5 3 0 ' + '0 7 0 ' + '0 0 0',
+            '6 0 0 ' + '1 9 5 ' + '0 0 0',
+            '0 9 8 ' + '0 0 0 ' + '0 6 0',
+
+            '8 0 0 ' + '0 6 0 ' + '0 0 3',
+            '4 0 0 ' + '8 0 3 ' + '0 0 1',
+            '7 0 0 ' + '0 2 0 ' + '0 0 6',
+
+            '0 6 0 ' + '0 0 0 ' + '2 8 0',
+            '0 0 0 ' + '4 1 9 ' + '0 0 5',
+            '0 0 0 ' + '0 8 0 ' + '0 7 9'
+        ];
+        for ( i = 0; i < this.boardSize; i++ ) {
+            this.board[i] = this.board[i].split( ' ' );
+        };
+
+        // Set number of filled cells
+        this.filledCells = 30;
+
+        // Keep a copy of the initial board
+        this.initialBoard = $.extend( true, [], this.board );
+
+        // Initialize corresponding solution
+        this.solution = [
+            '5 3 4 ' + '6 7 8 ' + '9 1 2',
+            '6 7 2 ' + '1 9 5 ' + '3 4 8',
+            '1 9 8 ' + '3 4 2 ' + '5 6 7',
+
+            '8 5 9 ' + '7 6 1 ' + '4 2 3',
+            '4 2 6 ' + '8 5 3 ' + '7 9 1',
+            '7 1 3 ' + '9 2 4 ' + '8 5 6',
+
+            '9 6 1 ' + '5 3 7 ' + '2 8 4',
+            '2 8 7 ' + '4 1 9 ' + '6 3 5',
+            '3 4 5 ' + '2 8 6 ' + '1 7 9'
+        ];
+        for ( i = 0; i < this.boardSize; i++ ) {
+            this.solution[i] = this.solution[i].split( ' ' );
+        };
+
+        return this.board;
+    },
+
+    /**
+     * Checks whether the provided solution is correct
+     * Note: Assumes puzzles have unique solutions, which is true in 99.99% of the cases.
+     *
+     * @param  {Array}    board
+     * @return {Boolean}          Whether the provided solution is correct or not
+     */
+    isSolved: function() {
+        var i, j;
+
+        // Check whether all cells have been filled
+        if( this.filledCells !== Math.pow( this.boardSize, 2 ) ) {
+            return false;
         }
-      }
-      game = chunk(game, 9);
-      for (var i = 0; i < 9; i++) {
-        for (var j = 0; j < 9; j++) {
-          var value = game[i][j];
-          game[i][j] = {
-            i: i,
-            j: i,
-            value: value,
-            editable: value === null,
-            hasConflict: false
-          };
-        }
-      }
 
-      this.game = game;
-      this.time = 0;
-      this.saveToLocalStorage();
-    },
-    continueGameClick: function(event) {
-      event.preventDefault();
-      this.game = JSON.parse(localStorage.currentGame);
-      this.time = parseInt(localStorage.time);
-    },
-    hasExistingGame: function() {
-      return !!localStorage.currentGame;
-    },
-    markAllWithoutConflict: function() {
-      for (var i = 0; i < 9; i++) {
-        for (var j = 0; j < 9; j++) {
-          this.game[i][j].hasConflict = false;
-        }
-      }
-    },
-    checkSubset: function(array) {
-      var nums = {};
-      for (var i = 0; i < 9; i++) {
-        if (array[i].value !== null && nums.hasOwnProperty(array[i].value)) {
-          array[i].hasConflict = true;
-          array[nums[array[i].value]].hasConflict = true;
-        }
-        nums[array[i].value] = i;
-      }
-    },
-    checkConflicts: function() {
-      this.markAllWithoutConflict();
+        for( i = 0; i < this.board.length; i++ ) {
+            // Verify values
+            // Note: Not using strict equals to because we want to ignore type inconsistencies.
+            for( j = 0; j < this.board[i].length; j++ ) {
+                // Empty value
+                if( this.board[i][j] == 0 ) {
+                    return false;
+                }
 
-      // check horizontal lines
-      for (var i = 0; i < 9; i++) {
-        var arr = [];
-        for (var j = 0; j < 9; j++) {
-          arr.push(this.game[i][j]);
+                if( this.board[i][j] != this.solution[i][j] ) {
+                    return false;
+                }
+            }
         }
-        this.checkSubset(arr);
-      }
-      // check vertical lines
-      for (var j = 0; j < 9; j++) {
-        var arr = [];
-        for (var i = 0; i < 9; i++) {
-          arr.push(this.game[i][j]);
+
+        return true;
+    },
+
+    /**
+     * Updates the board at specified position with number.
+     *
+     * @param  {Object} position The position to update
+     * @param  {Number} number   The number to update the position with
+     */
+    update: function ( position, number ) {
+        // Update filled cells count
+        if( this.board[position.row][position.column] == 0 && number != 0 ) {
+            ++this.filledCells;
+        } else if( this.board[position.row][position.column] != 0 && number == 0 ) {
+            --this.filledCells;
         }
-        this.checkSubset(arr);
-      }
-      // check squares
-      var c = this.game;
-      this.checkSubset([c[0][0], c[0][1], c[0][2], c[1][0], c[1][1], c[1][2], c[2][0], c[2][1], c[2][2]]);
-      this.checkSubset([c[3][0], c[3][1], c[3][2], c[4][0], c[4][1], c[4][2], c[5][0], c[5][1], c[5][2]]);
-      this.checkSubset([c[6][0], c[6][1], c[6][2], c[7][0], c[7][1], c[7][2], c[8][0], c[8][1], c[8][2]]);
-      this.checkSubset([c[0][3], c[0][4], c[0][5], c[1][3], c[1][4], c[1][5], c[2][3], c[2][4], c[2][5]]);
-      this.checkSubset([c[3][3], c[3][4], c[3][5], c[4][3], c[4][4], c[4][5], c[5][3], c[5][4], c[5][5]]);
-      this.checkSubset([c[6][3], c[6][4], c[6][5], c[7][3], c[7][4], c[7][5], c[8][3], c[8][4], c[8][5]]);
-      this.checkSubset([c[0][6], c[0][7], c[0][8], c[1][6], c[1][7], c[1][8], c[2][6], c[2][7], c[2][8]]);
-      this.checkSubset([c[3][6], c[3][7], c[3][8], c[4][6], c[4][7], c[4][8], c[5][6], c[5][7], c[5][8]]);
-      this.checkSubset([c[6][6], c[6][7], c[6][8], c[7][6], c[7][7], c[7][8], c[8][6], c[8][7], c[8][8]]);
-    },
-    cellKeyUp: function(event) {
-      var el = event.target;
-      var value = el.value;
-      if (value.length > 1) {
-        el.value = value[0];
-        value = el.value;
-      }
-      if (!/^[1-9]$/.test(value)) {
-        event.target.value = '';
-      }
 
-      var i = parseInt(el.getAttribute('data-i'));
-      var j = parseInt(el.getAttribute('data-j'));
-      if (el.value.length > 0) {
-        this.game[i][j].value = parseInt(value);
-      } else {
-        this.game[i][j].value = null;
-      }
+        this.board[position.row][position.column] = number;
+    },
 
-      this.checkConflicts();
-      this.saveToLocalStorage();
+    /**
+     * Clears a position on the board
+     *
+     * @param  {Object} position The position to clear
+     */
+    clear: function ( position ) {
+        this.update( position, 0 );
+    },
 
-      if (value.length > 0) {
-        event.target.blur();
-      }
+    /**
+     * Resets the board to its initial state and returns it
+     *
+     * @return {Array[]} The reset board
+     */
+    reset: function() {
+        this.board = $.extend( true, [], this.initialBoard );
+        return this.board;
     },
-    cellClick: function(event) {
-      if (event.target.readOnly) {
-        event.target.blur();
-      } else {
-        event.target.select();
-      }
-    },
-    backClick: function(event) {
-      event.preventDefault();
-      this.game = null;
-      this.time = null;
-    },
-    formatedTime: function() {
-      return formatTimeFromSeconds(this.time);
-    },
-    saveToLocalStorage: function() {
-      localStorage.currentGame = JSON.stringify(this.game);
-      localStorage.time = this.time;
+
+    /**
+     * Gets a list of valid numbers that can be played in a certain board position
+     *
+     * @param  {Object} position The position on the board
+     * @return {Array}          An array of valid numbers
+     */
+    getValidNumbers: function ( position ) {
+        var i, j, index, validNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+        // Check row
+        for( i = 0; i < this.board[position.row].length; i++ ) {
+            if( this.board[position.row][i] != 0 ) {
+                // Remove number that's been used from the valid numbers
+                // Note: Converting array items to numbers to make types compatible
+                index = validNumbers.betterIndexOf( +this.board[position.row][i] );
+                if( index !== -1 ) {
+                    validNumbers.splice( index, 1 );
+                }
+            }
+        }
+
+        // Check column
+        for( i = 0; i < this.board.length; i++ ) {
+            if( this.board[i][position.column] != 0 ) {
+                // Remove number that's been used from the valid numbers
+                // Note: Converting array items to numbers to make types compatible
+                index = validNumbers.betterIndexOf( +this.board[i][position.column] );
+                if( index !== -1 ) {
+                    validNumbers.splice( index, 1 );
+                }
+            }
+        }
+
+        // Check block
+        var beginRow = position.row - (position.row % 3),
+            beginCol = position.column - (position.column % 3),
+            endRow = beginRow + 2,
+            endCol = beginCol + 2;
+        for( i = beginRow; i <= endRow; i++ ) {
+            for( j = beginCol; j <= endCol; j++ ) {
+                if( this.board[i][j] != 0 ) {
+                    // Remove number that's been used from the valid numbers
+                    // Note: Converting array items to numbers to make types compatible
+                    index = validNumbers.betterIndexOf( +this.board[i][j] );
+                    if( index !== -1 ) {
+                        validNumbers.splice( index, 1 );
+                    }
+                }
+            }
+        }
+
+        return validNumbers;
     }
-  }
+
 });
 
-setInterval(function() {
-  if (v.time !== null) {
-    v.time++;
-    v.saveToLocalStorage();
-  }
-}, 1000);
+// Expose the constructor to the global scope
+window.Sudoku = Sudoku;
+
+})( window );
