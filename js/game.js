@@ -175,7 +175,7 @@ var Display = {
         /* dialog to enter value */
         var dialog = $(document.createElement('div')).addClass('input-dialog').hide();
         var form = $(document.createElement('form')).addClass('input-form');
-        var input = $('<input type="text" size="1">').addClass('input-input');
+        var input = $('<input type="tel" size="1">').addClass('input-input');
         dialog.append(form.append(input));
         /* display dialog */
         $('.input-dialog').remove();
