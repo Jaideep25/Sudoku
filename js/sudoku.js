@@ -1,7 +1,7 @@
 /**
  * Sudoku generator + Sudoku grid classes
  * 
- * @author Jani Hartikainen <firstname at codeutopia net>
+ * @author Jaideep <firstname at codeutopia net>
  */
 
 /**

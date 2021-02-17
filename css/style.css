@@ -1,6 +1,6 @@
 body {
     background: url(../img/tile.jpg);
-    text-align: center; /* suck it */
+    text-align: center;
 }
 #game {
     padding: 10px;
@@ -22,9 +22,9 @@ h1 {
     box-shadow: 0 0 8px #666;
 }
 .cell {
-    color: #B8860B;
+    color: #3700ff;
     text-align: center;
-    font-size: 24px;
+    font-size: xx-large;
     width: 48px !important;
     height: 48px !important;
     border: 1px solid lightgray;
@@ -55,6 +55,7 @@ h1 {
 .game-value {
     font-weight: bold;
     cursor: default;
+    font-size: xx-large;
     color: #000;
 }
 .conflict {
@@ -98,7 +99,8 @@ h1 {
     outline: none;
     text-align: center;
     font-size: 24px;
-    line-height: 48px; /* fucking ie */
+    line-height: 48px;
+    font-size: 100cm;
 }
 
 /* options */
